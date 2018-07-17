@@ -1,0 +1,1 @@
+// SETUP: sets up the app/ connects to db/ sets up the server

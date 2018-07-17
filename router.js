@@ -1,0 +1,1 @@
+// functions for when the user visits the /signup or /signin enpoints
