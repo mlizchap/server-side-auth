@@ -1,0 +1,22 @@
+{
+  "name": "server-side-auth",
+  "version": "1.0.0",
+  "description": "## Overview -  process of authentication:      - client makes request     - server looks at username/pw     - once credentionals are verified the server gives client an **identifying piece of info**",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "jwt-simple": "^0.5.1",
+    "mongoose": "^5.2.4",
+    "morgan": "^1.9.0",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0"
+  }
+}
