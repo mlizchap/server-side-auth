@@ -33,7 +33,7 @@
     - have to be wired up manually
     - can be set to any domain 
 
-## Folder Strucutre
+## Folder Structure
 - **controllers/authentication.js**
     - exports functions for signing in / signing up user when they go to the signin endpoint 
 - **models/user.js**
