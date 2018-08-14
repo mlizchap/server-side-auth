@@ -1,5 +1,23 @@
 # Server Side Auth
 
+## TOC
+- [overview](#overview)
+- [Folder Structure]()#folder-structure)
+- [Setup](#setup)
+- [Express App and Server](#create-the-express-app-and-start-the-server)
+- [The Router File](#setting-up-the-router-file)
+- [The Model](#create-the-model) 
+- [Mongoose Setup](#mongoose-setup)
+- [The Authentication Controller](authentication-controller-setup)
+- [Creating Items in the DB](#create-a-new-user-in-the-db)
+- [Creating the Route Handler](#create-a-route-handler-for-signing-in-the-user)
+- [Bcrypt](#bcrypt)
+- [JSON Web Token(JWTs)](json-web-tokens)
+- [Passport](#passport)
+    - [Local Strategy](#local-strategy)
+    - [JWT Strategy](#jwt-strategy)
+- [Authentication Routes](#authenticate-routes)
+
 ## Overview
 -  process of authentication: 
     - client makes request
@@ -38,7 +56,7 @@
 - **gitigore**
     - to prevent the secret and node modules from being commited to GH
 
-## Initial Set up 
+## Setup
 - `$ npm int` to create a package.json folder
 - install dependencies
 ```
@@ -213,7 +231,7 @@ userSchema.pre('save', function(next) {
     ```
 - *now when user is saved, you should only see the encrypted password*
 
-## JSON Web Tokens (JWTs)
+## JSON Web Tokens 
 - an identifying piece of information given to user for future requests 
     - after user is saved - send back JWT 
     - user id + secret string = JWT 
