@@ -1,5 +1,8 @@
 # Server Side Auth
 
+## Example
+- [Backend Auth App](https://github.com/mlizchap/back-end-auth-app)
+
 ## TOC
 - [overview](#overview)
 - [Folder Structure](#folder-structure)
