@@ -2,7 +2,7 @@
 
 ## TOC
 - [overview](#overview)
-- [Folder Structure]()#folder-structure)
+- [Folder Structure](#folder-structure)
 - [Setup](#setup)
 - [Express App and Server](#create-the-express-app-and-start-the-server)
 - [The Router File](#setting-up-the-router-file)
