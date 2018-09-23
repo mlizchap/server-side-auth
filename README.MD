@@ -65,15 +65,17 @@
 ```
 $ npm install --save express mongoose morgan body-parser 
 ```
-- create a `.gitingore` file: this will be where the 
+- create a `.gitingore` file and put node_modules here (secret for encrypting pw will eventually go here also)
 
 ## Create the Express App and Start the Server
 - create the express app
+- in `index.js`
     ```java
     const express = require('express'); // library for handling http requests
     const app = express(); // creates an instance of express
     ```
 - import the http module and set up the server
+- in `index.js`
     ```java
     const http = require('http'); 
 
@@ -85,8 +87,8 @@ $ npm install --save express mongoose morgan body-parser
 
 ## Setting up the router file
 - create the initial route for when the user reaches the home screen
+- in `router.js`
     ```java
-    // router.js
     module.exports = function(app) {
         app.get('/', function(req, res) {
             res.send({ greeting: 'hi' })
@@ -94,8 +96,8 @@ $ npm install --save express mongoose morgan body-parser
     }
     ```
 - export the function and import it into the index.js file 
+- in `index.js`
     ```java
-    // index.js
     const router= require('./router');
 
     router(app);
@@ -104,12 +106,13 @@ $ npm install --save express mongoose morgan body-parser
 
 ## Create the model 
 - import the mongoose module and the Schema object 
+- in `models/user.js`
     ```java
-    // models/user.js
     const mongoose = require('mongoose');
     const Schema = mongoose.Schema;
     ```
 - create the Schema and make sure the email is unique
+- in `models/user.js`
     ```java
     const userSchema = new Schema({
         email: {
@@ -120,53 +123,57 @@ $ npm install --save express mongoose morgan body-parser
         password: String 
     });
     ```
-- create and export the module
+- create and export the module'
+- in `models/user.js`
     ```java
     const ModelClass = mongoose.model('user', userSchema); // user model = represents a class of users 
     module.exports = ModelClass; 
     ```
 
-## Mongoose Setup
+## Database Setup
 - import the mongoose module 
+- in `index.js`
     ```java
     const mongoose = require('mongoose');
     ```
 - connect to the mongoose server (if the table does not exists its created)
+- in `index.js`
     ```java
     mongoose.connect('mongodb://localhost/auth');
     ```
 ## Authentication Controller Setup 
 - export a function 
+- in `controllers/authentication.js`
     ```java
-        // controllers/auth.js 
         exports.signup = function(req, res, next) {
             res.send({ test: "signup" })
         }
     ```
 - wire up in route handler in router.js
-```java
-const Authentication = require('./controllers/authentication');
+- in `router.js`
+    ```java
+    const Authentication = require('./controllers/authentication');
 
-module.exports = function(app) {
-    app.post('/signin', Authentication.signup);
-}
-```
+    module.exports = function(app) {
+        app.post('/signin', Authentication.signup);
+    }
+    ```
 
 ## Create a New User in the DB
 - inmport and wire up body parser in index.js; this is used for parsing requests in the body
+- in `index.js`
     ```java
-    // index.js
     const bodyParser = require('body-parser');
     app.use(bodyParser.json({ type: '*/*' })) 
     ```
 - import the User model into the controller file
+- in `controllers/authentication.js`
     ```java
-    // authentication.js
     const User = require('../models/user');
     ```
 - in the signup function - pull the email and password off of the request object
+- in `controllers/authentication.js`
     ```java
-    // authentication.js
     const email = req.body.email;
     const password = req.body.password;
     ```
@@ -189,7 +196,7 @@ module.exports = function(app) {
         });
         user.save(function(err) {
             if (err) { return next(err); }
-            res.json({ test: 'user created' });
+            res.json({ test: 'user created' }); // JWT will eventually go here
         });
     })
 ```
@@ -197,6 +204,7 @@ module.exports = function(app) {
 
 ## Create a Route Handler for Signing in the user
 - once we have their username and pw auth'd (with passport), we give them their token
+- in `controllers/authentication.js`
 ```java
 exports.signin = function(req, res, next) {
     res.send({ token: tokenForUser(req.user) })
@@ -207,21 +215,22 @@ exports.signin = function(req, res, next) {
 - never save passwords as plaintext, store as an encryption (bcrypt)
 - salt + submitted password = hashed password 
 - install bcrypt: `$ npm install --save bcrypt-nodejs`
-- wire up Bcrypt in user.js using `.pre` 
-```java
-userSchema.pre('save', function(next) {
-    // encryption logic for the pw will go here
-}
-```
-- generate a salt and then run a function where the salted pw will be the second arg, also get access to the user model 
-```java
-userSchema.pre('save', function(next) {
-    const user = this; // getting access to the user model; user = instance of the user model 
-    bcrypt.genSalt(10, function(err, salt) { 
-        // here we will assign the user given password to the salted password 
+- wire up Bcrypt  using `.pre` 
+- in `models/user.js`
+    ```java
+    userSchema.pre('save', function(next) {
+        // encryption logic for the pw will go here
     }
-})
-```
+    ```
+- generate a salt and then run a function where the salted pw will be the second arg, also get access to the user model 
+    ```java
+    userSchema.pre('save', function(next) {
+        const user = this; // getting access to the user model; user = instance of the user model 
+        bcrypt.genSalt(10, function(err, salt) { 
+            // here we will assign the user given password to the salted password 
+        }
+    })
+    ```
 - assign the user given password to the salted password 
     ```java
     bcrypt.genSalt(10, function(err, salt) {
@@ -245,18 +254,19 @@ userSchema.pre('save', function(next) {
     npm install --save jwt-simple
     ```
 - create a config.js file and create a secret string
+- in `config.js`
     ```java
-    module.exports = {
         secret: 'fadhjafskdlfhasjlkdfhure' // can be any random string
     }
     ```
 - import config and jwt lib into auth.js
-```java
-// authentication.js
-const jwt = require('jwt-simple');
-const config = require('../config');
-```
+- in `controllers/authentication.js`
+    ```java
+    const jwt = require('jwt-simple');
+    const config = require('../config');
+    ```
 - create a function that takes a user and returns a new token using the secret
+- in `controllers/authentication.js`
     ```java
     function tokenForUser(user) {
         const timestamp = new Date().getTime();
@@ -285,40 +295,43 @@ const config = require('../config');
     ```
     npm install --save passport passport-jwt
     ```
-- in the file services/passport.js import the proper modules 
-```java
-const passport = require('passport');
-const User = require('../models/user');
-const config = require('../config');
-const JwtStrategy = require('passport-jwt').Strategy;
-const ExtractJwt = require('passport-jwt').ExtractJwt;
-const LocalStrategy = require('passport-local');
-```
+- create a passport.js file in a folder called services and import modules
+- in `services/passport.js`
+    ```java
+    const passport = require('passport');
+    const User = require('../models/user');
+    const config = require('../config');
+    const JwtStrategy = require('passport-jwt').Strategy;
+    const ExtractJwt = require('passport-jwt').ExtractJwt;
+    const LocalStrategy = require('passport-local');
+    ```
 - **strategies** - methods for authenticating a user. EX: can verify with JWT or username/password (local)
 
 ### Local strategy
 - set up options, by default expects a username so we need to explicitey state we are using an email 
-```java
-const localOptions = { usernameField: 'email' };
-
+- in `services/passport.js`
+    ```java
+    const localOptions = { usernameField: 'email' };
+    ```
 - need to add a method to the user model to do password comparison 
 - use the methods property to create a new method called Passwords
-```java
-// models/user.js
-userSchema.methods.comparePassword = function(candidatePassword, callback) {
-    // this = reference to our user model 
-    // this.password = hashed and salted password
-    bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
-        if (err) { return callback(err); }
-
-        // if passwords match - isMatch is true; else false
-        callback(null, isMatch)
-    })
-}
-```
-- create the strategy.  The strategy will take the email and password the user submitted and will search the db and then use the `comparepassords` method defined in the user model to compare the pw submitted to the pw in the db.  If it finds a matching username/pw it will return the user, else it will return null.
+- in `models/user.js`
     ```java
-    // services/authentication.js
+    userSchema.methods.comparePassword = function(candidatePassword, callback) {
+        // this = reference to our user model 
+        // this.password = hashed and salted password
+        bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+            if (err) { return callback(err); }
+
+            // if passwords match - isMatch is true; else false
+            callback(null, isMatch)
+        })
+    }
+    ```
+- create the strategy.  The strategy will take the email and password the user submitted and will search the db and then use the `comparepassords` method defined in the user model to compare the pw submitted to the pw in the db.  If it finds a matching username/pw it will return the user, else it will return null.
+- in `services/authentication.js`
+    ```java
+
     const localLogin = new LocalStrategy(localOptions, function(email, password, done) {
         User.findOne({ email: email }, function(err, user) {
             if (err) { return done(err) } // err in search
@@ -341,9 +354,18 @@ userSchema.methods.comparePassword = function(candidatePassword, callback) {
 
 
 ### JWT Strategy 
-- in the callback function and uses the JWT payload - a decoded JWT token.  Includes a subject (user id) and timestamp.  The strategy checks if the user in the payload (sub) is in the db.  If it is it returns a user, if not it returns false.
+- in the callback function uses the JWT payload - a decoded JWT token.  Includes a subject (user id) and timestamp.  The strategy checks if the user in the payload (sub) is in the db.  If it is it returns a user, if not it returns false.
+- create the jwt options 
+- in `services/authentication.js`
+    ```javascript
+        const jwtOptions = {
+            // looks in the header called authorization for the token
+            jwtFromRequest: ExtractJwt.fromHeader('authorization'),
+            secretOrKey: config.secret
+        };
+    ```
+- in `services/authentication.js`
     ```java
-    // services/authentication.js
     const jwtLogin = new JwtStrategy(jwtOptions, function(payload, done) {
         User.findById(payload.sub, function(err, user) {
             if (err) { return done(err, false)}
@@ -365,6 +387,7 @@ userSchema.methods.comparePassword = function(candidatePassword, callback) {
     app.get(<route>, requireAuth, () => {})
     ```
 - import modules:
+- in `router.js`
     ```java
     const Authentication = require('./controllers/authentication');
     const passportService = require('./services/passport');
@@ -382,8 +405,6 @@ userSchema.methods.comparePassword = function(candidatePassword, callback) {
         })
         app.post('/signup', Authentication.signup);
         ```     
-    - *to test out*: send a post request to send a new user, copy the response object token and add as the value of a header called `authoritization`
-
 - create authentication using the email/password (local strategy)
     - create the requireSignin object that will be used as middleware
     ```java
@@ -393,3 +414,8 @@ userSchema.methods.comparePassword = function(candidatePassword, callback) {
     ```java
     app.post('/signin', requireSignin, Authentication.signin);
     ```
+    
+ - *to test out*: 
+    - `/signup`: send a post with new user in body - should give back a response object as a token
+   - `/` - use JWT response object in the header to go to protected route
+   - `/signin`: send a post request with existing user - should get back JWT to insert in header to go to existing routes
